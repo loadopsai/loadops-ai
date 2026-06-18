@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
@@ -15,7 +16,7 @@ type Message = {
   created_at?: string;
 };
 
-export default function ChatPage() {
+function ChatContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -555,5 +556,12 @@ export default function ChatPage() {
       </div>
 
     </main>
+  );
+}
+export default function ChatPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ChatContent />
+    </Suspense>
   );
 }

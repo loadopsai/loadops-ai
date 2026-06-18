@@ -1,10 +1,11 @@
 "use client";
 
+import { Suspense } from "react";
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { useSearchParams, useRouter } from "next/navigation";
 
-export default function Signup() {
+function SignupContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -395,5 +396,12 @@ export default function Signup() {
 
       </div>
     </main>
+  );
+}
+export default function Signup() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignupContent />
+    </Suspense>
   );
 }
