@@ -1,0 +1,188 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid #E4E7ED;
+  padding: 0 5%;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.logo {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0F1520;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.logo span { color: #1A56DB; }
+
+.nav {
+  display: flex;
+  gap: 28px;
+  flex: 1;
+}
+.nav a {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #4A5568;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+.nav a:hover { color: #0F1520; }
+
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.loginBtn {
+  padding: 8px 18px;
+  border-radius: 9px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4A5568;
+  border: 1.5px solid #D0D5E0;
+  text-decoration: none;
+  background: transparent;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+}
+.loginBtn:hover { color: #0F1520; border-color: #6B7A8D; }
+
+.signupBtn {
+  padding: 8px 18px;
+  border-radius: 9px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: #1A56DB;
+  text-decoration: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+}
+.signupBtn:hover { background: #1446C0; }
+
+/* HAMBURGER — hidden on desktop */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.hamburger:hover { background: #F0F2F5; }
+
+.bar {
+  display: block;
+  width: 22px;
+  height: 2.5px;
+  background: #0F1520;
+  border-radius: 2px;
+  transition: all 0.22s ease;
+  transform-origin: center;
+}
+
+/* DRAWER — hidden by default */
+.drawer {
+  display: none;
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  background: #ffffff;
+  border-bottom: 1px solid #E4E7ED;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09);
+  padding: 10px 5% 18px;
+  flex-direction: column;
+  gap: 2px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.drawerOpen {
+  display: flex;
+}
+
+.drawerLink {
+  padding: 13px 12px;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #3D4A5C;
+  text-decoration: none;
+  display: block;
+  transition: background 0.15s, color 0.15s;
+}
+.drawerLink:hover { background: #EBF1FD; color: #1A56DB; }
+
+.drawerDivider {
+  height: 1px;
+  background: #E4E7ED;
+  margin: 8px 0;
+}
+
+.drawerBtns {
+  display: flex;
+  gap: 8px;
+}
+
+.drawerLogin {
+  flex: 1;
+  padding: 11px 0;
+  border-radius: 9px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #3D4A5C;
+  background: #F7F8FA;
+  border: 1.5px solid #D0D5E0;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.drawerSignup {
+  flex: 1;
+  padding: 11px 0;
+  border-radius: 9px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: #1A56DB;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: background 0.15s;
+}
+.drawerSignup:hover { background: #1446C0; }
+
+/* ═══════════════════════════
+   MOBILE — 768px and below
+═══════════════════════════ */
+@media (max-width: 768px) {
+  .nav       { display: none; }
+  .actions   { display: none; }
+  .hamburger { display: flex; }
+}
