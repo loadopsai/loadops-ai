@@ -1,7 +1,14 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Link from "next/link";
 import Header from "./component/header";
+
+// ✅ This is the CORRECT way to set viewport in Next.js App Router
+// Adding <meta viewport> inside <head> JSX does NOT work in production
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   title: "LoadOps AI",
@@ -11,13 +18,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body style={{ margin: 0, padding: 0, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
 
         <Header />
@@ -26,8 +26,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <footer style={{ background: "#F7F8FA", borderTop: "1px solid #E4E7ED", padding: "48px 5% 28px" }}>
           <div className="footer-grid">
+
             <div>
-              <Link href="/" style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0F1520", letterSpacing: "-0.03em", textDecoration: "none", display: "inline-block", marginBottom: 10 }}>
+              <Link href="/" style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0F1520", letterSpacing: "-0.03em", textDecoration: "none", display: "inline-block", marginBottom: 10, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 Load<span style={{ color: "#1A56DB" }}>Ops</span> AI
               </Link>
               <p style={{ fontSize: "0.77rem", color: "#4A5568", lineHeight: 1.65, maxWidth: 220 }}>
@@ -37,31 +38,35 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             {[
               { title: "Platform", links: [
-                { href: "/platform", label: "Load Board" },
-                { href: "/ai-matching", label: "AI Matching" },
-                { href: "/dispatcher-hub", label: "Dispatcher Hub" },
-                { href: "/carrier-tools", label: "Carrier Tools" },
-                { href: "/broker-tools", label: "Broker Tools" },
+                { href: "/platform",       label: "Load Board"      },
+                { href: "/ai-matching",    label: "AI Matching"     },
+                { href: "/dispatcher-hub", label: "Dispatcher Hub"  },
+                { href: "/carrier-tools",  label: "Carrier Tools"   },
+                { href: "/broker-tools",   label: "Broker Tools"    },
               ]},
               { title: "Policies", links: [
-                { href: "/privacy-policy", label: "Privacy Policy" },
+                { href: "/privacy-policy",   label: "Privacy Policy"   },
                 { href: "/terms-of-service", label: "Terms of Service" },
-                { href: "/refund-policy", label: "Refund Policy" },
-                { href: "/cookie-policy", label: "Cookie Policy" },
+                { href: "/refund-policy",    label: "Refund Policy"    },
+                { href: "/cookie-policy",    label: "Cookie Policy"    },
               ]},
               { title: "Support", links: [
-                { href: "/contact", label: "Contact Us" },
-                { href: "/help-center", label: "Help Center" },
+                { href: "/contact",     label: "Contact Us"      },
+                { href: "/help-center", label: "Help Center"     },
                 { href: "mailto:support@loadopsai.com", label: "Email Support" },
-                { href: "/assistance", label: "24/7 Assistance" },
+                { href: "/assistance",  label: "24/7 Assistance" },
               ]},
             ].map(col => (
               <div key={col.title}>
-                <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "#3D4A5C", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 14 }}>{col.title}</div>
+                <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "#3D4A5C", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 14 }}>
+                  {col.title}
+                </div>
                 <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 8 }}>
                   {col.links.map(l => (
                     <li key={l.href}>
-                      <Link href={l.href} style={{ fontSize: "0.78rem", color: "#4A5568", textDecoration: "none" }}>{l.label}</Link>
+                      <Link href={l.href} style={{ fontSize: "0.78rem", color: "#4A5568", textDecoration: "none", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                        {l.label}
+                      </Link>
                     </li>
                   ))}
                 </ul>
