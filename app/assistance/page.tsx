@@ -103,9 +103,11 @@ export default function AssistancePage() {
         /* PAGE */
         .pg { max-width: 900px; margin: 0 auto; padding: 48px 5% 80px; }
 
-        /* HEADER */
-        .hd { margin-bottom: 36px; animation: fadeUp 0.5s ease both; }
-        .hd-eyebrow { display: flex; align-items: center; gap: 8px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); margin-bottom: 10px; }
+        /* HERO FULL WIDTH — light card style */
+        .hero-full { width: 100%; background: var(--white); border-bottom: 1px solid var(--border); padding: 48px 5%; animation: fadeUp 0.5s ease both; }
+        .hero-full-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; gap: 32px; }
+        .hero-full-left { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .hd-eyebrow { display: flex; align-items: center; gap: 8px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); }
         .hd-eyebrow::before { content: ''; width: 18px; height: 2px; background: var(--blue); border-radius: 1px; }
         .hd-live { width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: inline-block; animation: pulse 1.8s infinite; }
         .hd-title { font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 800; letter-spacing: -0.045em; color: var(--txt); line-height: 1.06; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -187,19 +189,27 @@ export default function AssistancePage() {
           .cc-grid { grid-template-columns: 1fr; }
           .info-row { grid-template-columns: 1fr; }
           .pg { padding: 32px 4% 60px; }
+          .hero-full { padding: 32px 4%; }
+          .hero-full-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
         }
       `}</style>
 
-      <div className="pg">
-
-        {/* HEADER */}
-        <div className="hd">
-          <div className="hd-eyebrow">
-            <span className="hd-live" /> Support Center
+      {/* HERO — full width light, outside .pg */}
+      <div className="hero-full">
+        <div className="hero-full-inner">
+          <div className="hero-full-left">
+            <div className="hd-eyebrow">
+              <span className="hd-live" /> Support Center
+            </div>
           </div>
-          <div className="hd-title">24/7 <em>Assistance</em></div>
-          <p className="hd-sub">Our AI assistant and support team are available around the clock. Get help with loads, brokers, dispatchers, accounts, and more.</p>
+          <div>
+            <div className="hd-title">24/7 <em>Assistance</em></div>
+            <p className="hd-sub">Our AI assistant and support team are available around the clock. Get help with loads, brokers, dispatchers, accounts, and more.</p>
+          </div>
         </div>
+      </div>
+
+      <div className="pg">
 
         {/* CONTACT CARDS */}
         <div className="cc-grid">
