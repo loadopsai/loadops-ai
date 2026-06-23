@@ -51,7 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 { href: "/cookie-policy",    label: "Cookie Policy"    },
               ]},
               { title: "Support", links: [
-                { href: "/contact",     label: "Contact Us"      },
+                { href: "/contact-us",     label: "Contact Us"      },
                 { href: "/help-center", label: "Help Center"     },
                 { href: "mailto:support@loadopsai.com", label: "Email Support" },
                 { href: "/assistance",  label: "24/7 Assistance" },
