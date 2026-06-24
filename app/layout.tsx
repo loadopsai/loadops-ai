@@ -53,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               { title: "Support", links: [
                 { href: "/contact-us",     label: "Contact Us"      },
                 { href: "/help-center", label: "Help Center"     },
-                { href: "mailto:support@loadopsai.com", label: "Email Support" },
+                { href: "mailto:support@loadopsai.co", label: "Email Support" },
                 { href: "/assistance",  label: "24/7 Assistance" },
               ]},
             ].map(col => (

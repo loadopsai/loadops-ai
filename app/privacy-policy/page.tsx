@@ -376,7 +376,7 @@ export default function PrivacyPolicy() {
               <div className="pp-highlight amber">
                 <span className="pp-highlight-icon">⚠️</span>
                 <div className="pp-highlight-text">
-                  While we implement strong security measures, no system is 100% secure. If you suspect unauthorized access to your account, contact us immediately at <b>security@loadopsai.com</b>.
+                  While we implement strong security measures, no system is 100% secure. If you suspect unauthorized access to your account, contact us immediately at <b>support@loadopsai.co</b>.
                 </div>
               </div>
             </div>
@@ -406,7 +406,7 @@ export default function PrivacyPolicy() {
                   </div>
                 ))}
               </div>
-              <p className="pp-p">To exercise any of these rights, contact us at <a href="mailto:privacy@loadopsai.com">privacy@loadopsai.com</a>. We will respond within 30 days. We may need to verify your identity before processing certain requests.</p>
+              <p className="pp-p">To exercise any of these rights, contact us at <a href="mailto:support@loadopsai.co">support@loadopsai.co</a>. We will respond within 30 days. We may need to verify your identity before processing certain requests.</p>
             </div>
           </div>
 
@@ -470,7 +470,7 @@ export default function PrivacyPolicy() {
                   LoadOps AI is a professional freight platform intended exclusively for users who are 18 years of age or older. We do not knowingly collect personal information from individuals under 18.
                 </div>
               </div>
-              <p className="pp-p">If we become aware that we have collected personal information from a minor without verified parental consent, we will take immediate steps to delete that information. If you believe a minor has provided us with personal data, please contact us at <a href="mailto:privacy@loadopsai.com">privacy@loadopsai.com</a>.</p>
+              <p className="pp-p">If we become aware that we have collected personal information from a minor without verified parental consent, we will take immediate steps to delete that information. If you believe a minor has provided us with personal data, please contact us at <a href="mailto:support@loadopsai.co">support@loadopsai.co</a>.</p>
             </div>
           </div>
 
@@ -505,7 +505,7 @@ export default function PrivacyPolicy() {
               If you have any questions, concerns, or requests regarding this Privacy Policy or your personal data, our team is here to help. We aim to respond to all privacy inquiries within 30 days.
             </p>
             <div className="pp-contact-btns">
-              <a href="mailto:privacy@loadopsai.com" className="pp-contact-btn primary">✉️ privacy@loadopsai.com</a>
+              <a href="mailto:support@loadopsai.co" className="pp-contact-btn primary">✉️ support@loadopsai.co</a>
               <button className="pp-contact-btn ghost" onClick={() => router.push("/contact")}>📞 Contact Page</button>
               <button className="pp-contact-btn ghost" onClick={() => router.push("/")}>← Back to Home</button>
             </div>

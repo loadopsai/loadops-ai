@@ -363,7 +363,7 @@ export default function ContactUsPage() {
 
           {/* CONTACT METHODS */}
           {[
-            { icon: "✉️", bg: "#EBF1FD", title: "Email Support",       desc: "For general inquiries, account help, and platform questions.",      link: "support@loadopsai.com",      href: "mailto:support@loadopsai.com" },
+            { icon: "✉️", bg: "#EBF1FD", title: "Email Support",       desc: "For general inquiries, account help, and platform questions.",      link: "support@loadopsai.co",      href: "mailto:support@loadopsai.com" },
           ].map((m, i) => (
             <a key={i} className="cu-method-card" href={m.href}>
               <div className="cu-method-icon" style={{ background: m.bg }}>{m.icon}</div>

@@ -1061,12 +1061,12 @@ export default function CookiePolicy() {
 
             <div className="cp-contact-btns">
 
-              <button
-                className="cp-contact-btn primary"
-                onClick={() => router.push("/contact")}
-              >
-                Contact Support
-              </button>
+              <a
+  className="cp-contact-btn primary"
+  onClick={() => window.location.href = "mailto:support@loadopsai.co"}
+>
+  Contact Support
+</a>
 
               <button
                 className="cp-contact-btn ghost"

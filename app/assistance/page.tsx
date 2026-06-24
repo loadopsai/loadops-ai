@@ -213,22 +213,22 @@ export default function AssistancePage() {
 
         {/* CONTACT CARDS */}
         <div className="cc-grid">
-          <a href="mailto:support@loadopsai.com" className="cc">
+          <a href="mailto:support@loadopsai.co" className="cc">
             <div className="cc-icon">✉️</div>
             <div className="cc-title">General Support</div>
-            <div className="cc-email">support@loadopsai.com</div>
+            <div className="cc-email">support@loadopsai.co</div>
             <div className="cc-tag" style={{ background: "#E6F7EE", color: "#12A150" }}>✓ &lt; 1hr response</div>
           </a>
-          <a href="mailto:urgent@loadopsai.com" className="cc">
+          <a href="mailto:support@loadopsai.co" className="cc">
             <div className="cc-icon">🚨</div>
             <div className="cc-title">Urgent Freight Issues</div>
-            <div className="cc-email">urgent@loadopsai.com</div>
+            <div className="cc-email">support@loadopsai.co</div>
             <div className="cc-tag" style={{ background: "#FEF2F2", color: "#DC2626" }}>🔴 &lt; 30min response</div>
           </a>
-          <a href="mailto:legal@loadopsai.com" className="cc">
+          <a href="mailto:support@loadopsai.co" className="cc">
             <div className="cc-icon">⚖️</div>
             <div className="cc-title">Legal & Fraud Reports</div>
-            <div className="cc-email">legal@loadopsai.com</div>
+            <div className="cc-email">support@loadopsai.co</div>
             <div className="cc-tag" style={{ background: "#EDE9FE", color: "#7C3AED" }}>⚖️ &lt; 2hr response</div>
           </a>
         </div>
@@ -338,7 +338,7 @@ export default function AssistancePage() {
             <p>Real humans available around the clock for urgent freight situations.</p>
           </div>
           <div className="cta-strip-btns">
-            <button className="cta-btn white" onClick={() => router.push("/contact")}>✉️ Contact Us</button>
+            <a href="mailto:support@loadopsai.co" className="cta-btn white">✉️ Contact Us</a>
             <button className="cta-btn ghost" onClick={() => router.push("/help-center")}>Help Center</button>
           </div>
         </div>

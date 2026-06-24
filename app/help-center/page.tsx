@@ -366,11 +366,11 @@ export default function HelpCenterPage() {
               For urgent freight issues, use the direct email below.
             </p>
             <div className="hc-cta-btns">
-              <button className="hc-cta-btn hc-cta-btn-white" onClick={() => router.push("/contact")}>
-                ✉️ Contact Support
-              </button>
-              <a className="hc-cta-btn hc-cta-btn-ghost" href="mailto:support@loadopsai.com">
-                support@loadopsai.com
+              <a className="hc-cta-btn hc-cta-btn-white" href="mailto:support@loadopsai.co">
+  ✉️ Contact Support
+</a>
+              <a className="hc-cta-btn hc-cta-btn-ghost" href="mailto:support@loadopsai.co">
+                support@loadopsai.co
               </a>
             </div>
           </div>

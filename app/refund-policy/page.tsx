@@ -1100,7 +1100,7 @@ export default function RefundPolicy() {
 
               <button
                 className="rp-contact-btn primary"
-                onClick={() => router.push("/contact")}
+               onClick={() => { window.location.href = "mailto:support@loadopsai.co"; }}
               >
                 Contact Support
               </button>

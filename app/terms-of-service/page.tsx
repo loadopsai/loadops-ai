@@ -746,7 +746,7 @@ export default function TermsOfService() {
               If you have any questions, concerns, or need clarification about these Terms of Service, please contact our legal team. We aim to respond to all legal inquiries within 5 business days.
             </p>
             <div className="tos-contact-btns">
-              <a href="mailto:support@loadopsai.com" className="tos-contact-btn primary">⚖️ support@loadopsai.com</a>
+              <a href="mailto:support@loadopsai.co" className="tos-contact-btn primary">⚖️ support@loadopsai.co</a>
               <button className="tos-contact-btn ghost" onClick={() => router.push("/")}>← Back to Home</button>
             </div>
           </div>
