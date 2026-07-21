@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Link from "next/link";
 import Header from "./component/header";
+import GlobalCallProvider from "@/app/component/GlobalCallProvider";
 
 // ✅ This is the CORRECT way to set viewport in Next.js App Router
 // Adding <meta viewport> inside <head> JSX does NOT work in production
@@ -19,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body style={{ margin: 0, padding: 0, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-
+        <GlobalCallProvider>
         <Header />
 
         <main>{children}</main>
@@ -89,7 +90,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
           @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; } }
         `}</style>
-
+</GlobalCallProvider>
       </body>
     </html>
   );

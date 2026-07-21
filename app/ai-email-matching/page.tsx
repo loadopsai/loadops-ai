@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { usePlan } from "@/app/lib/usePlan";
+import { LockedScreen } from "@/app/component/LockedScreen";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -71,6 +73,7 @@ const STATUS_STYLE: Record<MatchStatus, StatusStyle> = {
 // ── Component ────────────────────────────────────────────────────────────────
 
 export default function AIEmailMatchingPage() {
+  const { isPro, loading: planLoading } = usePlan();
   const router = useRouter();
 
   // Profile form
@@ -190,6 +193,20 @@ Return ONLY a raw JSON array (no markdown, no explanation, no backticks):
   };
 
   // ── Render ───────────────────────────────────────────────────────────────
+
+  if (planLoading) {
+  return <div>Loading...</div>;
+}
+
+if (!isPro) {
+  return (
+    <LockedScreen
+      name="Email Matching & Automation"
+      plan="Pro"
+      url="https://app.loadopsai.co/l/hladv"
+    />
+  );
+}
 
   return (
     <main style={{ minHeight: "100vh", background: "#F7F8FA", fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#0F1520" }}>

@@ -30,9 +30,30 @@ function SignupContent() {
       const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { role } } });
       if (error) { setLoading(false); alert(error.message); return; }
       if (data.user) {
-        const { error: profileError } = await supabase.from("profiles").insert([{ id: data.user.id, email, role }]);
-        if (profileError) console.log(profileError);
-      }
+  // Create profile
+  const { error: profileError } = await supabase
+    .from("profiles")
+    .insert([{ id: data.user.id, email, role }]);
+
+  if (profileError) console.log(profileError);
+
+ // Create 7-day trial
+const expiresAt = new Date();
+expiresAt.setDate(expiresAt.getDate() + 7);
+
+const { error: planError } = await supabase
+  .from("user_plans")
+  .insert({
+    email,
+    plan: "trial",
+    expires_at: expiresAt.toISOString(),
+  });
+
+if (planError) {
+  alert(planError.message);
+  console.log(planError);
+}
+}
       setLoading(false);
       alert("Account created successfully! Please confirm your email and then login.");
       router.push("/login");

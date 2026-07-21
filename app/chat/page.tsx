@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { supabase } from "@/app/lib/supabase";
+import { useCall } from "@/app/component/GlobalCallProvider";
 
 type Message = {
   id?: string;
@@ -16,9 +17,13 @@ type Message = {
   created_at?: string;
 };
 
+const CARRIER_ID = "f04084ee-60d8-4701-ad24-1a87a5dbc71d";
+const DISPATCHER_ID = "7375649c-9e73-4341-b881-436614e375fa";
+
 function ChatContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const call = useCall();
 
   const [userId, setUserId] = useState("");
   const [receiverId, setReceiverId] = useState("");
@@ -44,6 +49,9 @@ function ChatContent() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
+  // who we're chatting with, for display + the call invite
+  const peerName = userId === CARRIER_ID ? "Dispatcher" : "Carrier";
+
   // ── INIT ──
   useEffect(() => {
     let realtimeChannel: any;
@@ -53,10 +61,10 @@ function ChatContent() {
       const currentUserId = user.id;
       setUserId(currentUserId);
       let receiver = searchParams.get("receiver");
-      if (currentUserId === "f04084ee-60d8-4701-ad24-1a87a5dbc71d") {
-        receiver = "7375649c-9e73-4341-b881-436614e375fa";
+      if (currentUserId === CARRIER_ID) {
+        receiver = DISPATCHER_ID;
       } else {
-        receiver = "f04084ee-60d8-4701-ad24-1a87a5dbc71d";
+        receiver = CARRIER_ID;
       }
       if (!receiver) return;
       setReceiverId(receiver);
@@ -166,12 +174,12 @@ function ChatContent() {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => { if (e.key === "Enter") sendMessage(); };
   const openFile = (url: string) => window.open(url, "_blank");
 
-  const startCall = async () => {
-    try {
-      const roomId = `loadops-${Date.now()}`;
-      await supabase.from("calls").insert([{ caller_id: userId, receiver_id: receiverId, room_id: roomId, status: "calling" }]);
-      router.push(`/call?room=${roomId}&receiver=${receiverId}`);
-    } catch { alert("Unable to start call"); }
+  // Starts a real two-way video call via the global WebRTC + Supabase Realtime
+  // signaling engine (useVideoCall / GlobalCallProvider) — this replaces the old
+  // redirect to a /call page that didn't actually connect anyone.
+  const startVideoCall = () => {
+    if (!receiverId) { alert("Can't start a call yet — still loading this conversation."); return; }
+    call.startCall(receiverId, peerName);
   };
 
   const filteredMessages = messages.filter(msg =>
@@ -413,7 +421,7 @@ function ChatContent() {
           <div className="ch-contact">
             <div className="ch-avatar">🎯</div>
             <div className="ch-contact-info">
-              <div className="ch-contact-name">Dispatcher Chat</div>
+              <div className="ch-contact-name">{peerName} Chat</div>
               <div className="ch-contact-status" style={{ color: online ? "#12A150" : "#DC2626" }}>
                 <span className={`ch-status-dot ${online ? "online" : "offline"}`} />
                 {lastSeen}
@@ -425,7 +433,7 @@ function ChatContent() {
         <div className="ch-header-right">
           <div className="ch-stat-pill">💬 {messageCount} messages</div>
           <div className="ch-secure-pill">🔒 {connectionStatus}</div>
-          <button className="ch-call-btn" onClick={startCall}>📞 <span>Start Call</span></button>
+          <button className="ch-call-btn" onClick={startVideoCall}>📹 <span>Video Call</span></button>
         </div>
       </div>
 

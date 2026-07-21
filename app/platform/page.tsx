@@ -9,6 +9,7 @@ type Load = {
   company_name: string;
   contact: string;
   email: string;
+  phone: string;
   pickup_location: string;
   delivery_location: string;
   equipment: string;
@@ -23,6 +24,7 @@ type Load = {
   status: string;
   distance?: string;
   broker_verified?: boolean;
+  broker_id?: string;
 };
 
 const equipmentColors: Record<string, { bg: string; color: string }> = {
@@ -44,6 +46,7 @@ export default function PlatformPage() {
   const [loading, setLoading] = useState(true);
   const [selectedLoad, setSelectedLoad] = useState<Load | null>(null);
   const [savedLoads, setSavedLoads] = useState<string[]>([]);
+  const [submitting, setSubmitting] = useState(false);
 
   const [pickupSearch, setPickupSearch] = useState("");
   const [pickupDeadhead, setPickupDeadhead] = useState("");
@@ -84,16 +87,75 @@ export default function PlatformPage() {
     setSavedLoads(prev => prev.includes(loadId) ? prev.filter(id => id !== loadId) : [...prev, loadId]);
   };
 
+  // Submits a PENDING booking request for the broker to approve/decline — it no
+  // longer marks the load as booked directly. The broker gets notified by email
+  // and sees this request on their dashboard under "Booking Requests".
   const handleBookLoad = async () => {
     if (!selectedLoad) return;
-    const { carrier_name, mc_number, phone, email } = bookingForm;
+    const { carrier_name, mc_number, phone, email, truck_type, message } = bookingForm;
     if (!carrier_name || !mc_number || !phone || !email) { alert("Fill all required fields"); return; }
-    const { error } = await supabase.from("load_bookings").insert([{ load_id: selectedLoad.id, ...bookingForm, status: "pending" }]);
-    if (error) { alert(error.message); } else {
-      alert("Booking Request Submitted!");
-      setSelectedLoad(null);
-      setBookingForm({ carrier_name: "", mc_number: "", phone: "", email: "", truck_type: "", message: "" });
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { alert("Please log in first."); return; }
+
+    if (!selectedLoad.broker_id) {
+      alert("This load is missing broker information and can't be booked right now.");
+      return;
     }
+
+    setSubmitting(true);
+
+    const { error } = await supabase.from("booking_requests").insert([{
+      load_id: selectedLoad.id,
+      broker_id: selectedLoad.broker_id,
+      carrier_id: user.id,
+      carrier_name,
+      carrier_contact: carrier_name,
+      carrier_phone: phone,
+      carrier_email: email,
+      carrier_mc: mc_number,
+      note: [truck_type ? `Truck: ${truck_type}` : "", message || ""].filter(Boolean).join(" — "),
+      pickup_location: selectedLoad.pickup_location,
+      delivery_location: selectedLoad.delivery_location,
+      equipment: selectedLoad.equipment,
+      total_rate: selectedLoad.total_rate,
+      pickup_date: selectedLoad.pickup_date,
+      status: "pending",
+    }]);
+
+    if (error) {
+      setSubmitting(false);
+      alert(error.message);
+      return;
+    }
+
+    // best-effort email to the broker — the request is already saved either way
+    if (selectedLoad.email) {
+      fetch("/api/notify-booking-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          brokerEmail: selectedLoad.email,
+          brokerContact: selectedLoad.contact,
+          pickupLocation: selectedLoad.pickup_location,
+          deliveryLocation: selectedLoad.delivery_location,
+          totalRate: selectedLoad.total_rate,
+          equipment: selectedLoad.equipment,
+          pickupDate: selectedLoad.pickup_date,
+          carrierName: carrier_name,
+          carrierContact: carrier_name,
+          carrierPhone: phone,
+          carrierEmail: email,
+          carrierMc: mc_number,
+          note: message,
+        }),
+      }).catch((err) => console.error("notify-booking-request failed:", err));
+    }
+
+    setSubmitting(false);
+    alert("Booking request submitted! The broker has been notified and will approve or decline it.");
+    setSelectedLoad(null);
+    setBookingForm({ carrier_name: "", mc_number: "", phone: "", email: "", truck_type: "", message: "" });
   };
 
   const handleAiAlerts = () => alert("AI Load Alerts Activated! Carriers will receive AI matched loads by email.");
@@ -272,8 +334,8 @@ export default function PlatformPage() {
         .plt-btn-save { background: var(--white); color: var(--txt2); border: 1.5px solid var(--border2); }
         .plt-btn-save:hover { border-color: var(--amber); color: var(--amber); }
         .plt-btn-save.saved { background: var(--amber-l); color: var(--amber); border-color: #FDE68A; }
-        .plt-btn-ai { background: var(--purple-l); color: var(--purple); border: 1.5px solid var(--purple-m); }
-        .plt-btn-ai:hover { background: var(--purple); color: #fff; }
+        .plt-btn-call { background: var(--green-l); color: var(--green); border: 1.5px solid var(--green-m); text-decoration: none; display: inline-flex; align-items: center; }
+        .plt-btn-call:hover { background: var(--green); color: #fff; }
 
         /* MAP IN CARD */
         .plt-card-map { width: 100%; height: 180px; border-radius: 10px; border: 1px solid var(--border); display: block; }
@@ -304,8 +366,10 @@ export default function PlatformPage() {
         .plt-modal-actions { display: flex; gap: 10px; margin-top: 22px; }
         .plt-modal-submit { flex: 1; padding: 12px; border-radius: 10px; background: var(--blue); color: #fff; font-size: 0.84rem; font-weight: 700; border: none; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.15s; }
         .plt-modal-submit:hover { background: var(--blue-h); transform: translateY(-1px); }
+        .plt-modal-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .plt-modal-cancel { padding: 12px 20px; border-radius: 10px; background: var(--red-l); color: var(--red); font-size: 0.84rem; font-weight: 700; border: 1.5px solid #FEE2E2; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.15s; }
         .plt-modal-cancel:hover { background: #FEE2E2; }
+        .plt-modal-hint { font-size: 0.72rem; color: var(--txt4); margin-top: 14px; line-height: 1.5; }
 
         /* RESPONSIVE */
         @media (max-width: 1000px) {
@@ -555,10 +619,14 @@ export default function PlatformPage() {
                       </div>
                       <div className="plt-load-actions">
                         <button className="plt-btn plt-btn-primary" onClick={() => setSelectedLoad(load)}>📋 Book Load</button>
+                        {load.phone && (
+                          <a className="plt-btn plt-btn-call" href={`tel:${load.phone.replace(/[^\d+]/g, "")}`}>
+                            📞 Call Broker
+                          </a>
+                        )}
                         <button className={`plt-btn plt-btn-save${isSaved ? " saved" : ""}`} onClick={() => toggleSaveLoad(load.id)}>
                           {isSaved ? "★ Saved" : "☆ Save"}
                         </button>
-                        <button className="plt-btn plt-btn-ai">🤖 AI Assist</button>
                       </div>
                     </div>
 
@@ -629,9 +697,15 @@ export default function PlatformPage() {
               </div>
             </div>
 
+            <div className="plt-modal-hint">
+              This sends a request to the broker — your load isn't confirmed until they approve it. You'll be notified by email either way.
+            </div>
+
             <div className="plt-modal-actions">
-              <button className="plt-modal-submit" onClick={handleBookLoad}>Submit Booking Request →</button>
-              <button className="plt-modal-cancel" onClick={() => setSelectedLoad(null)}>Cancel</button>
+              <button className="plt-modal-submit" onClick={handleBookLoad} disabled={submitting}>
+                {submitting ? "Submitting..." : "Submit Booking Request →"}
+              </button>
+              <button className="plt-modal-cancel" onClick={() => setSelectedLoad(null)} disabled={submitting}>Cancel</button>
             </div>
           </div>
         </div>

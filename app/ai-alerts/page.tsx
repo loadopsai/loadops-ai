@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/app/lib/supabase";
+import { usePlan } from "@/app/lib/usePlan";
+import { LockedScreen } from "@/app/component/LockedScreen";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -63,6 +65,7 @@ const STATS = [
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function AIAlertsPage() {
+  const { isPro, loading: planLoading } = usePlan();
   const router = useRouter();
 
   const [step,    setStep]    = useState<Step>(1);
@@ -132,6 +135,31 @@ export default function AIAlertsPage() {
 
   const canNext1 = form.equipment.length > 0;
   const canSave  = !!(form.email || form.phone);
+
+  if (loading) {
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      Loading...
+    </div>
+  );
+}
+
+if (!isPro) {
+  return (
+    <LockedScreen
+      name="AI Load Alerts"
+      plan="Pro"
+      url="https://app.loadopsai.co/l/hladv"
+    />
+  );
+}
 
   return (
     <main style={{ minHeight: "100vh", background: "#F7F8FA", fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#0F1520" }}>

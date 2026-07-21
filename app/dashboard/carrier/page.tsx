@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/app/lib/supabase";
+import { useCall } from "@/app/component/GlobalCallProvider";
 
 type Load = {
   id: string;
@@ -33,6 +34,16 @@ const equipmentColors: Record<string, { bg: string; color: string }> = {
   "Power Only":         { bg: "#EFF1F5", color: "#4A5568" },
 };
 
+// fields that must be filled in before a carrier profile can be saved
+const REQUIRED_PROFILE_FIELDS: { key: string; label: string }[] = [
+  { key: "company_name", label: "Company Name" },
+  { key: "owner_name",   label: "Owner Name" },
+  { key: "phone",        label: "Phone" },
+  { key: "email",        label: "Email" },
+  { key: "mc_number",    label: "MC Number" },
+  { key: "usdot",        label: "USDOT" },
+];
+
 export default function CarrierDashboard() {
   const DISPATCHER_ID = "7375649c-9e73-4341-b881-436614e375fa";
   const CARRIER_ID    = "f04084ee-60d8-4701-ad24-1a87a5dbc71d";
@@ -44,12 +55,18 @@ export default function CarrierDashboard() {
   const [equipmentFilter, setEquipmentFilter] = useState("All");
   const [selectedLoad, setSelectedLoad] = useState<Load | null>(null);
   const [activeTab, setActiveTab] = useState<"loads" | "profile" | "documents">("loads");
+  const [bookingId, setBookingId] = useState<string | null>(null);
 
   const [profile, setProfile] = useState({
     company_name: "", owner_name: "", phone: "", email: "",
     mc_number: "", usdot: "", equipment: "", city: "", state: "",
     experience: "", preferred_lanes: "", about: "",
   });
+  const [profileErrors, setProfileErrors] = useState<Record<string, boolean>>({});
+
+  // Real two-way call (calling, ringing, connecting, connected) lives in the
+  // global provider mounted in app/layout.tsx — this just gives us the controls.
+  const call = useCall();
 
   const fetchLoads = async () => {
     setLoading(true);
@@ -72,13 +89,77 @@ export default function CarrierDashboard() {
     setFilteredLoads(filtered);
   }, [search, equipmentFilter, loads]);
 
+  // ── EMAIL NOTIFICATION: tell the broker their load got booked ──
+  const notifyBrokerOfBooking = async (load: Load) => {
+    if (!load.email) return; // nothing to notify, broker email wasn't on the posting
+    try {
+      const res = await fetch("/api/notify-load-booked", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          brokerEmail: load.email,
+          brokerContact: load.contact,
+          pickupLocation: load.pickup_location,
+          deliveryLocation: load.delivery_location,
+          totalRate: load.total_rate,
+          equipment: load.equipment,
+          pickupDate: load.pickup_date,
+          carrierName: profile.company_name || "A carrier on LoadOps AI",
+          carrierContact: profile.owner_name || "",
+          carrierPhone: profile.phone || "",
+          carrierEmail: profile.email || "",
+          carrierMc: profile.mc_number || "",
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        console.error("Broker notification failed:", body?.error || res.statusText);
+      }
+    } catch (err) {
+      // Don't block the booking flow if the email fails — just log it.
+      console.error("Broker notification request failed:", err);
+    }
+  };
+
   const handleBookLoad = async (id: string) => {
     if (!confirm("Book this load?")) return;
+    const load = loads.find((l) => l.id === id);
+    setBookingId(id);
     const { error } = await supabase.from("loads").update({ status: "booked" }).eq("id", id);
-    if (error) { alert(error.message); } else { alert("Load booked successfully"); fetchLoads(); }
+    setBookingId(null);
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    alert("Load booked successfully. The broker has been notified by email.");
+    if (load) notifyBrokerOfBooking(load);
+    fetchLoads();
+  };
+
+  const validateProfile = () => {
+    const errors: Record<string, boolean> = {};
+    REQUIRED_PROFILE_FIELDS.forEach(({ key }) => {
+      if (!String((profile as any)[key] || "").trim()) errors[key] = true;
+    });
+
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email.trim());
+    if (profile.email && !emailOk) errors.email = true;
+
+    setProfileErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      const missingLabels = REQUIRED_PROFILE_FIELDS
+        .filter(({ key }) => errors[key])
+        .map(({ label }) => label);
+      if (errors.email && !missingLabels.includes("Email")) missingLabels.push("Email (invalid format)");
+      alert(`Please complete the required fields before saving:\n\n• ${missingLabels.join("\n• ")}`);
+      return false;
+    }
+    return true;
   };
 
   const saveProfile = () => {
+    if (!validateProfile()) return;
     localStorage.setItem("carrierProfile", JSON.stringify(profile));
     alert("Profile saved");
   };
@@ -87,6 +168,7 @@ export default function CarrierDashboard() {
     if (!confirm("Reset profile?")) return;
     const empty = { company_name: "", owner_name: "", phone: "", email: "", mc_number: "", usdot: "", equipment: "", city: "", state: "", experience: "", preferred_lanes: "", about: "" };
     setProfile(empty);
+    setProfileErrors({});
     localStorage.removeItem("carrierProfile");
   };
 
@@ -207,9 +289,12 @@ export default function CarrierDashboard() {
         .cd-btn-view:hover { border-color: var(--blue-m); color: var(--blue); }
         .cd-btn-book   { background: var(--blue); color: #fff; }
         .cd-btn-book:hover { background: var(--blue-h); transform: translateY(-1px); }
+        .cd-btn-book:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .cd-btn-booked { background: var(--green-l); color: var(--green); border: 1.5px solid var(--green-m); cursor: not-allowed; }
         .cd-btn-chat   { background: var(--green); color: #fff; }
         .cd-btn-chat:hover { background: #0e8f45; transform: translateY(-1px); }
+        .cd-btn-call   { background: var(--purple); color: #fff; }
+        .cd-btn-call:hover { background: #6D28D9; transform: translateY(-1px); }
 
         /* ── LOADING / EMPTY ── */
         .cd-loading { text-align: center; padding: 80px 20px; }
@@ -232,9 +317,11 @@ export default function CarrierDashboard() {
         .cd-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         .cd-field {}
         .cd-label { display: block; font-size: 0.68rem; font-weight: 700; color: var(--txt2); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.06em; }
+        .cd-required { color: var(--red); margin-left: 2px; }
         .cd-input { width: 100%; padding: 10px 13px; border-radius: 9px; background: var(--bg); border: 1.5px solid var(--border2); color: var(--txt); font-size: 0.82rem; font-family: 'Plus Jakarta Sans', sans-serif; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
         .cd-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-l); background: var(--white); }
         .cd-input::placeholder { color: var(--txt4); }
+        .cd-input-error { border-color: var(--red) !important; background: var(--red-l) !important; }
         .cd-textarea { width: 100%; min-height: 100px; padding: 10px 13px; border-radius: 9px; background: var(--bg); border: 1.5px solid var(--border2); color: var(--txt); font-size: 0.82rem; font-family: 'Plus Jakarta Sans', sans-serif; outline: none; transition: border-color 0.15s, box-shadow 0.15s; resize: vertical; line-height: 1.6; }
         .cd-textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-l); background: var(--white); }
         .cd-textarea::placeholder { color: var(--txt4); }
@@ -266,7 +353,7 @@ export default function CarrierDashboard() {
         .cd-modal-row-label { font-size: 0.68rem; font-weight: 700; color: var(--txt4); text-transform: uppercase; letter-spacing: 0.07em; }
         .cd-modal-row-value { font-size: 0.8rem; font-weight: 600; color: var(--txt2); text-align: right; max-width: 60%; }
         .cd-modal-rate { font-size: 1.4rem; font-weight: 800; color: var(--green); letter-spacing: -0.03em; margin: 14px 0; }
-        .cd-modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .cd-modal-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
 
         /* RESPONSIVE */
         @media (max-width: 900px) {
@@ -444,11 +531,16 @@ export default function CarrierDashboard() {
                         <button className="cd-btn cd-btn-view" onClick={() => setSelectedLoad(load)}>📄 Details</button>
                         {isBooked
                           ? <button className="cd-btn cd-btn-booked" disabled>✓ Booked</button>
-                          : <button className="cd-btn cd-btn-book" onClick={() => handleBookLoad(load.id)}>📋 Book Load</button>
+                          : <button className="cd-btn cd-btn-book" disabled={bookingId === load.id} onClick={() => handleBookLoad(load.id)}>
+                              {bookingId === load.id ? "Booking..." : "📋 Book Load"}
+                            </button>
                         }
                         <a className="cd-btn cd-btn-chat" href={`/chat?receiver=${DISPATCHER_ID}`}>
                           💬 Chat
                         </a>
+                        <button className="cd-btn cd-btn-call" onClick={() => call.startCall(DISPATCHER_ID, "Dispatcher")}>
+                          📹 Video Call
+                        </button>
                       </div>
                     </div>
 
@@ -476,20 +568,25 @@ export default function CarrierDashboard() {
               <div className="cd-section-label">Company & Contact</div>
               <div className="cd-grid-2">
                 {[
-                  { key: "company_name",   label: "Company Name",  placeholder: "Smith Trucking LLC" },
-                  { key: "owner_name",     label: "Owner Name",    placeholder: "John Smith"         },
-                  { key: "phone",          label: "Phone",         placeholder: "+1 234 567 890"     },
-                  { key: "email",          label: "Email",         placeholder: "john@trucking.com"  },
-                  { key: "city",           label: "City",          placeholder: "Dallas"             },
-                  { key: "state",          label: "State",         placeholder: "TX"                 },
+                  { key: "company_name",   label: "Company Name",  placeholder: "Smith Trucking LLC", required: true  },
+                  { key: "owner_name",     label: "Owner Name",    placeholder: "John Smith",          required: true  },
+                  { key: "phone",          label: "Phone",         placeholder: "+1 234 567 890",       required: true  },
+                  { key: "email",          label: "Email",         placeholder: "john@trucking.com",    required: true  },
+                  { key: "city",           label: "City",          placeholder: "Dallas",               required: false },
+                  { key: "state",          label: "State",         placeholder: "TX",                   required: false },
                 ].map((f) => (
                   <div key={f.key} className="cd-field">
-                    <label className="cd-label">{f.label}</label>
+                    <label className="cd-label">
+                      {f.label}{f.required && <span className="cd-required">*</span>}
+                    </label>
                     <input
-                      className="cd-input"
+                      className={`cd-input ${profileErrors[f.key] ? "cd-input-error" : ""}`}
                       placeholder={f.placeholder}
                       value={(profile as any)[f.key]}
-                      onChange={(e) => setProfile({ ...profile, [f.key]: e.target.value })}
+                      onChange={(e) => {
+                        setProfile({ ...profile, [f.key]: e.target.value });
+                        if (profileErrors[f.key]) setProfileErrors((prev) => ({ ...prev, [f.key]: false }));
+                      }}
                     />
                   </div>
                 ))}
@@ -498,18 +595,24 @@ export default function CarrierDashboard() {
               <div className="cd-section-label">Compliance & Equipment</div>
               <div className="cd-grid-2">
                 {[
-                  { key: "mc_number",   label: "MC Number",      placeholder: "MC-123456"      },
-                  { key: "usdot",       label: "USDOT",          placeholder: "USDOT-123456"   },
-                  { key: "equipment",   label: "Equipment Type", placeholder: "Dry Van 53ft"   },
-                  { key: "experience",  label: "Experience",     placeholder: "5 Years"        },
+                  { key: "mc_number",   label: "MC Number",      placeholder: "MC-123456",    required: true  },
+                  { key: "usdot",       label: "USDOT",          placeholder: "USDOT-123456", required: true  },
+                  { key: "equipment",   label: "Equipment Type", placeholder: "Dry Van 53ft", required: false },
+                  { key: "experience",  label: "Experience",     placeholder: "5 Years",      required: false },
                 ].map((f) => (
                   <div key={f.key} className="cd-field">
-                    <label className="cd-label">{f.label}</label>
+                    <label className="cd-label">
+                      {f.label}{f.required && <span className="cd-required">*</span>}
+                    </label>
                     <input
-                      className="cd-input"
+                      className={`cd-input ${profileErrors[f.key] ? "cd-input-error" : ""}`}
                       placeholder={f.placeholder}
                       value={(profile as any)[f.key]}
-                      onChange={(e) => setProfile({ ...profile, [f.key]: f.key === "usdot" ? e.target.value.toUpperCase() : e.target.value })}
+                      onChange={(e) => {
+                        const val = f.key === "usdot" ? e.target.value.toUpperCase() : e.target.value;
+                        setProfile({ ...profile, [f.key]: val });
+                        if (profileErrors[f.key]) setProfileErrors((prev) => ({ ...prev, [f.key]: false }));
+                      }}
                     />
                   </div>
                 ))}
@@ -609,16 +712,18 @@ export default function CarrierDashboard() {
 
             <div className="cd-modal-actions">
               {selectedLoad.status !== "booked"
-                ? <button className="cd-btn cd-btn-book" style={{ flex: 1, justifyContent: "center" }} onClick={() => { handleBookLoad(selectedLoad.id); setSelectedLoad(null); }}>📋 Book This Load</button>
+                ? <button className="cd-btn cd-btn-book" style={{ flex: 1, justifyContent: "center" }} disabled={bookingId === selectedLoad.id} onClick={() => { handleBookLoad(selectedLoad.id); setSelectedLoad(null); }}>
+                    {bookingId === selectedLoad.id ? "Booking..." : "📋 Book This Load"}
+                  </button>
                 : <button className="cd-btn cd-btn-booked" style={{ flex: 1, justifyContent: "center" }} disabled>✓ Already Booked</button>
               }
               <a className="cd-btn cd-btn-chat" href={`/chat?receiver=${DISPATCHER_ID}`}>💬 Chat</a>
+              <button className="cd-btn cd-btn-call" onClick={() => call.startCall(DISPATCHER_ID, "Dispatcher")}>📹 Call</button>
               <button className="cd-btn cd-btn-view" onClick={() => setSelectedLoad(null)}>Close</button>
             </div>
           </div>
         </div>
       )}
-
     </main>
   );
 }

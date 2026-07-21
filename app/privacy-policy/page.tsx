@@ -506,7 +506,7 @@ export default function PrivacyPolicy() {
             </p>
             <div className="pp-contact-btns">
               <a href="mailto:support@loadopsai.co" className="pp-contact-btn primary">✉️ support@loadopsai.co</a>
-              <button className="pp-contact-btn ghost" onClick={() => router.push("/contact")}>📞 Contact Page</button>
+              <button className="pp-contact-btn ghost" onClick={() => router.push("/contact-us")}>📞 Contact Page</button>
               <button className="pp-contact-btn ghost" onClick={() => router.push("/")}>← Back to Home</button>
             </div>
           </div>

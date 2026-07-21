@@ -2,6 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/app/lib/supabase";
+import { usePlan } from "@/app/lib/usePlan";
+import { getDispatcherLoadLimit } from "@/app/lib/permissions";
+import { canPostDispatcherLoad } from "@/app/lib/canPostLoad";
+import UpgradePlan from "@/app/component/UpgradePlan";
+import {
+  getUpgradeLink,
+  getRecommendedPlan,
+} from "@/app/lib/upgradeLinks";
 
 type DispatcherProfile = {
   id?: string;
@@ -41,6 +49,7 @@ type DispatcherLoad = {
   rate: string;
   miles: string;
   pickup_date: string;
+  delivery_date: string;
   notes: string;
   created_at?: string;
 };
@@ -57,6 +66,10 @@ const equipmentColors: Record<string, { bg: string; color: string }> = {
 };
 
 export default function DispatcherDashboard() {
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+const [upgradeMessage, setUpgradeMessage] = useState("");
+  const { plan, loading: planLoading } = usePlan();
+  const dispatcherLoadLimit = getDispatcherLoadLimit(plan);
   const [loading, setLoading] = useState(false);
   const [loadLoading, setLoadLoading] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
@@ -72,7 +85,7 @@ export default function DispatcherDashboard() {
 
   const [loadForm, setLoadForm] = useState<DispatcherLoad>({
     title: "", pickup_location: "", delivery_location: "", equipment: "",
-    load_type: "", weight: "", rate: "", miles: "", pickup_date: "", notes: "",
+    load_type: "", weight: "", rate: "", miles: "", pickup_date: "", delivery_date: "", notes: "",
   });
 
   useEffect(() => { fetchProfile(); fetchLoads(); }, []);
@@ -84,6 +97,7 @@ export default function DispatcherDashboard() {
     if (data) setForm(data);
   };
 
+  
   const fetchLoads = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -119,18 +133,59 @@ export default function DispatcherDashboard() {
   };
 
   const handlePostLoad = async () => {
-    setLoadLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { alert("Please login first"); setLoadLoading(false); return; }
-    const { error } = await supabase.from("dispatcher_loads").insert([{ dispatcher_id: user.id, ...loadForm }]);
+  setLoadLoading(true);
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    alert("Please login first");
     setLoadLoading(false);
-    if (error) { alert(error.message); } else {
-      alert("Load posted");
-      setLoadForm({ title: "", pickup_location: "", delivery_location: "", equipment: "", load_type: "", weight: "", rate: "", miles: "", pickup_date: "", notes: "" });
-      fetchLoads();
-      setActiveTab("posted");
-    }
-  };
+    return;
+  }
+  const permission = await canPostDispatcherLoad(user.id, plan);
+
+if (!permission.allowed) {
+  setUpgradeMessage(permission.message || "");
+  setUpgradeOpen(true);
+  setLoadLoading(false);
+  return;
+}
+  const { error } = await supabase
+    .from("dispatcher_loads")
+    .insert([
+      {
+       dispatcher_id: user.id,
+        ...loadForm,
+      },
+    ]);
+
+  setLoadLoading(false);
+
+  if (error) {
+    alert(error.message);
+  } else {
+    alert("Load posted");
+
+    setLoadForm({
+      title: "",
+      pickup_location: "",
+      delivery_location: "",
+      equipment: "",
+      load_type: "",
+      weight: "",
+      rate: "",
+      miles: "",
+      pickup_date: "",
+      delivery_date: "",
+      notes: "",
+    });
+
+    fetchLoads();
+    setActiveTab("posted");
+  }
+};
 
   const deleteLoad = async (id?: string) => {
     if (!id) return;
@@ -282,7 +337,7 @@ export default function DispatcherDashboard() {
         .dd-lcard-rate { font-size: 1.15rem; font-weight: 800; color: var(--green); letter-spacing: -0.03em; white-space: nowrap; }
         .dd-lcard-miles { font-size: 0.68rem; color: var(--txt4); text-align: right; margin-top: 2px; }
 
-        .dd-lcard-meta { padding: 12px 20px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: var(--bg); border-bottom: 1px solid var(--border); }
+        .dd-lcard-meta { padding: 12px 20px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; background: var(--bg); border-bottom: 1px solid var(--border); }
         .dd-lmeta-label { font-size: 0.6rem; font-weight: 700; color: var(--txt4); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 3px; }
         .dd-lmeta-value { font-size: 0.77rem; font-weight: 600; color: var(--txt2); }
         .dd-eq-tag { display: inline-block; font-size: 0.63rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
@@ -557,6 +612,10 @@ export default function DispatcherDashboard() {
                   <label className="dd-label">Pickup Date & Time</label>
                   <input type="datetime-local" name="pickup_date" value={loadForm.pickup_date} onChange={handleLoadChange} className="dd-input" />
                 </div>
+                <div className="dd-field">
+                  <label className="dd-label">Delivery Date & Time</label>
+                  <input type="datetime-local" name="delivery_date" value={loadForm.delivery_date} onChange={handleLoadChange} className="dd-input" />
+                </div>
               </div>
 
               <div className="dd-section-label">Notes</div>
@@ -628,7 +687,21 @@ export default function DispatcherDashboard() {
                       <div>
                         <div className="dd-lmeta-label">Pickup Date</div>
                         <div className="dd-lmeta-value" style={{ fontSize: "0.72rem" }}>
-                          {load.pickup_date ? new Date(load.pickup_date).toLocaleDateString() : "TBD"}
+                          {load.pickup_date
+                            ? new Date(load.pickup_date).toLocaleString(undefined, {
+                                month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
+                              })
+                            : "TBD"}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="dd-lmeta-label">Delivery Date</div>
+                        <div className="dd-lmeta-value" style={{ fontSize: "0.72rem" }}>
+                          {load.delivery_date
+                            ? new Date(load.delivery_date).toLocaleString(undefined, {
+                                month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
+                              })
+                            : "TBD"}
                         </div>
                       </div>
                     </div>
@@ -654,6 +727,15 @@ export default function DispatcherDashboard() {
         )}
 
       </div>
+     <UpgradePlan
+  open={upgradeOpen}
+  onClose={() => setUpgradeOpen(false)}
+  currentPlan={plan}
+  recommendedPlan={getRecommendedPlan(plan)}
+  title="Load Posting Limit Reached"
+  description={upgradeMessage}
+  upgradeUrl={getUpgradeLink(plan)}
+/>
     </main>
   );
 }
