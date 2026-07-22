@@ -592,11 +592,11 @@ export default function Home() {
 
       {/* ── STATS ── */}
       <div className="stats">
-        <div className="sc"><div className="sn">48<span>K+</span></div><div className="sl">Loads Posted Daily</div></div>
-        <div className="sc"><div className="sn">4.2<span>s</span></div><div className="sl">AI Match Time</div></div>
-        <div className="sc"><div className="sn">3</div><div className="sl">Dedicated Dashboards</div></div>
-        <div className="sc"><div className="sn">98<span>%</span></div><div className="sl">Verified Brokers</div></div>
-      </div>
+  <div className="sc"><div className="sn">3</div><div className="sl">Dedicated Dashboards</div></div>
+  <div className="sc"><div className="sn">Zero</div><div className="sl">Cold Calls Required</div></div>
+  <div className="sc"><div className="sn">24<span>/7</span></div><div className="sl">AI Load Matching</div></div>
+  <div className="sc"><div className="sn">100<span>%</span></div><div className="sl">Digital Booking</div></div>
+</div>
 
       {/* ── 3 DASHBOARDS ── */}
       <section className="dashboards">

@@ -300,11 +300,11 @@ export default function DispatcherHub() {
 
       {/* ── STATS ── */}
       <div className="dh-stats">
-        <div className="dh-sc"><div className="dh-sn">3.2<span>K+</span></div><div className="dh-sl">Active Dispatchers</div></div>
-        <div className="dh-sc"><div className="dh-sn">4.8<span>★</span></div><div className="dh-sl">Avg Profile Rating</div></div>
-        <div className="dh-sc"><div className="dh-sn">100<span>%</span></div><div className="dh-sl">Verified Profiles</div></div>
-        <div className="dh-sc"><div className="dh-sn">48<span>h</span></div><div className="dh-sl">Avg Match Time</div></div>
-      </div>
+  <div className="dh-sc"><div className="dh-sn">100<span>%</span></div><div className="dh-sl">Verified Profiles</div></div>
+  <div className="dh-sc"><div className="dh-sn">24<span>/7</span></div><div className="dh-sl">Available to Carriers</div></div>
+  <div className="dh-sc"><div className="dh-sn">Zero<span>$</span></div><div className="dh-sl">Commission Taken</div></div>
+  <div className="dh-sc"><div className="dh-sn">3<span>+</span></div><div className="dh-sl">Equipment Specialties</div></div>
+</div>
 
       {/* ── CORE IDEA ── */}
       <section className="dh-section">

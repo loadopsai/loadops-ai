@@ -288,11 +288,11 @@ export default function HowItWorks() {
 
       {/* ── STATS ── */}
       <div className="hiw-stats">
-        <div className="hiw-sc"><div className="hiw-sn">60<span>s</span></div><div className="hiw-sl">Search to Booked</div></div>
-        <div className="hiw-sc"><div className="hiw-sn">48<span>K+</span></div><div className="hiw-sl">Daily Loads Matched</div></div>
-        <div className="hiw-sc"><div className="hiw-sn">0</div><div className="hiw-sl">Spam Calls</div></div>
-        <div className="hiw-sc"><div className="hiw-sn">3</div><div className="hiw-sl">Dedicated Dashboards</div></div>
-      </div>
+  <div className="hiw-sc"><div className="hiw-sn">60<span>s</span></div><div className="hiw-sl">Load Booking Speed</div></div>
+  <div className="hiw-sc"><div className="hiw-sn">3</div><div className="hiw-sl">Dedicated Dashboards</div></div>
+  <div className="hiw-sc"><div className="hiw-sn">Zero</div><div className="hiw-sl">Spam Calls</div></div>
+  <div className="hiw-sc"><div className="hiw-sn">100<span>%</span></div><div className="hiw-sl">Digital Process</div></div>
+</div>
 
       {/* ── CORE 3-STEP PROCESS ── */}
       <section className="hiw-section">

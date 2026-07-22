@@ -265,10 +265,10 @@ export default function Pricing() {
 
       {/* ── STATS ── */}
       <div className="pr-stats">
-        <div className="pr-sc"><div className="pr-sn">12.4<span>K+</span></div><div className="pr-sl">Active Users</div></div>
-        <div className="pr-sc"><div className="pr-sn">$0</div><div className="pr-sl">Setup Fee</div></div>
+        <div className="pr-sc"><div className="pr-sn">24<span>/7</span></div><div className="pr-sl">Platform Access</div></div>
+        <div className="pr-sc"><div className="pr-sn">$Zero</div><div className="pr-sl">Setup Fee</div></div>
         <div className="pr-sc"><div className="pr-sn">7<span>days</span></div><div className="pr-sl">Free Trial</div></div>
-        <div className="pr-sc"><div className="pr-sn">98<span>%</span></div><div className="pr-sl">Satisfaction Rate</div></div>
+        <div className="pr-sc"><div className="pr-sn">3</div><div className="pr-sl">Dedicated Dashboards</div></div>
       </div>
 
       {/* ── PRICING CARDS ── */}

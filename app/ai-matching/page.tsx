@@ -315,8 +315,8 @@ export default function AIMatching() {
       <div className="aim-stats">
         <div className="aim-sc"><div className="aim-sn">4.2<span>s</span></div><div className="aim-sl">Avg Match Time</div></div>
         <div className="aim-sc"><div className="aim-sn">96<span>%</span></div><div className="aim-sl">Match Accuracy</div></div>
-        <div className="aim-sc"><div className="aim-sn">48<span>K+</span></div><div className="aim-sl">Daily Load Signals</div></div>
-        <div className="aim-sc"><div className="aim-sn">0<span></span></div><div className="aim-sl">Spam Calls</div></div>
+        <div className="aim-sc"><div className="aim-sn">24<span>/7</span></div><div className="aim-sl">Live Load Matching</div></div>
+        <div className="aim-sc"><div className="aim-sn">Zero<span></span></div><div className="aim-sl">Spam Calls</div></div>
       </div>
 
       {/* ── HOW IT WORKS ── */}
