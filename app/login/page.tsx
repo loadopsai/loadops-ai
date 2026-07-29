@@ -17,10 +17,30 @@ export default function Login() {
   const handleLogin = async () => {
     if (!email || !password) { alert("Please fill all fields"); return; }
     setLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) { setLoading(false); alert(error.message); return; }
+   const { data, error } = await supabase.auth.signInWithPassword({
+  email,
+  password,
+});
+
+if (error) {
+  setLoading(false);
+  alert(error.message);
+  return;
+}
+
+console.log("Logged in user:", data.user);
+console.log("User ID:", data.user.id);
+console.log("Selected role:", role);
     const { data: profile, error: profileError } = await supabase
-      .from("profiles").select("*").eq("id", data.user.id).eq("role", role).single();
+  .from("profiles")
+  .select("*")
+  .eq("id", data.user.id);
+
+console.log(profile);
+console.log(profileError);
+
+console.log("Profile:", profile);
+console.log("Profile Error:", profileError);
     setLoading(false);
     if (profileError || !profile) { alert(`No ${role} account found with this email.`); return; }
     if (role === "carrier")    { router.push("/dashboard/carrier");    return; }
@@ -35,6 +55,7 @@ export default function Login() {
     setResetLoading(false);
     if (error) { alert(error.message); } else { alert("Password reset email sent. Please check your inbox."); }
   };
+  
 
   const roles = [
     { value: "carrier",    icon: "🚛", label: "Carrier",    desc: "Find loads & AI matches"  },

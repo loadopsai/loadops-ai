@@ -34,8 +34,12 @@ function SignupContent() {
   const { error: profileError } = await supabase
     .from("profiles")
     .insert([{ id: data.user.id, email, role }]);
-
-  if (profileError) console.log(profileError);
+  if (profileError) {
+  setLoading(false);
+  alert(profileError.message);
+  console.error(profileError);
+  return;
+}
 
  // Create 7-day trial
 const expiresAt = new Date();

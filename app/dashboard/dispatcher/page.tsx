@@ -407,7 +407,7 @@ if (!permission.allowed) {
             👤 Profile
           </button>
           <button className={`dd-tab${activeTab === "loads" ? " active" : ""}`} onClick={() => setActiveTab("loads")}>
-            📦 Post Load
+            📦 Post Load Opportunities
           </button>
           <button className={`dd-tab${activeTab === "posted" ? " active" : ""}`} onClick={() => setActiveTab("posted")}>
             📋 My Loads
@@ -531,14 +531,14 @@ if (!permission.allowed) {
         )}
 
         {/* ═══════════════════════════════ */}
-        {/* TAB: POST LOAD                 */}
+        {/* TAB: POST LOAD OPPORTUNITIES                */}
         {/* ═══════════════════════════════ */}
         {activeTab === "loads" && (
           <div className="dd-card">
             <div className="dd-card-header">
               <div className="dd-card-title">
                 <div className="dd-card-title-icon" style={{ background: "#EBF1FD" }}>📦</div>
-                Post Available Load
+                Post Available Loads
               </div>
             </div>
             <div className="dd-form-body">
