@@ -358,7 +358,7 @@ export default function CarrierTools() {
             <div className="ct-proof-avs">
               <span>JT</span><span>MK</span><span>SR</span><span>PL</span><span>+</span>
             </div>
-            <div className="ct-proof-txt">Trusted by <b>7,600+</b> carriers</div>
+            <div className="ct-proof-txt">Helping <b>carriers find better opportunities</b></div>
             <div className="ct-pdiv" />
             <div className="ct-pstars">★★★★★</div>
             <div className="ct-proof-txt"><b>4.9</b> / 5 rating</div>
@@ -370,10 +370,10 @@ export default function CarrierTools() {
 
       {/* ── STATS ── */}
       <div className="ct-stats">
-        <div className="ct-sc"><div className="ct-sn">48<span>K+</span></div><div className="ct-sl">Daily Loads Posted</div></div>
+        <div className="ct-sc"><div className="ct-sn">24<span>/7</span></div><div className="ct-sl">Platform Access</div></div>
         <div className="ct-sc"><div className="ct-sn">4.2<span>s</span></div><div className="ct-sl">AI Match Speed</div></div>
-        <div className="ct-sc"><div className="ct-sn">98<span>%</span></div><div className="ct-sl">Verified Brokers</div></div>
-        <div className="ct-sc"><div className="ct-sn">0</div><div className="ct-sl">Spam Calls</div></div>
+        <div className="ct-sc"><div className="ct-sn">100<span>%</span></div><div className="ct-sl">Carrier Controlled</div></div>
+        <div className="ct-sc"><div className="ct-sn">Zero</div><div className="ct-sl">Spam Calls</div></div>
       </div>
 
       {/* ── CORE TOOLS ── */}

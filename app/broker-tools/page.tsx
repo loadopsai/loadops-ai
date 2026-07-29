@@ -319,10 +319,10 @@ export default function BrokerTools() {
 
       {/* ── STATS ── */}
       <div className="bt-stats">
-        <div className="bt-sc"><div className="bt-sn">12<span>K+</span></div><div className="bt-sl">Verified Carriers</div></div>
+        <div className="bt-sc"><div className="bt-sn">24<span>/7</span></div><div className="bt-sl">Platform Access</div></div>
         <div className="bt-sc"><div className="bt-sn">4.2<span>s</span></div><div className="bt-sl">Avg Carrier Match</div></div>
-        <div className="bt-sc"><div className="bt-sn">98<span>%</span></div><div className="bt-sl">Load Coverage Rate</div></div>
-        <div className="bt-sc"><div className="bt-sn">0</div><div className="bt-sl">Spam Calls</div></div>
+        <div className="bt-sc"><div className="bt-sn">7<span>Days</span></div><div className="bt-sl"></div>Free Trial</div>
+        <div className="bt-sc"><div className="bt-sn">Zero</div><div className="bt-sl">Spam Calls</div></div>
       </div>
 
       {/* ── CORE TOOLS ── */}
@@ -341,12 +341,11 @@ export default function BrokerTools() {
               </div>
               <div className="bt-tool-title">Post Loads in 60 Seconds</div>
               <div className="bt-tool-desc">
-                Fill out one form — pickup, delivery, equipment, rate, and pickup date — and your load is live on the board instantly,
-                visible to 12,000+ verified carriers and matched by AI.
+                Fill out one form—pickup, delivery, equipment, rate, and pickup date—and your load opportunity is published instantly, making it easy for interested carriers to discover and contact you.
               </div>
             </div>
             <div className="bt-tool-features">
-              <div className="bt-tool-feat">Post to 12,000+ active carriers instantly</div>
+              <div className="bt-tool-feat">Post load opportunities to qualified carriers instantly</div>
               <div className="bt-tool-feat">AI carrier matching within 4.2 seconds</div>
               <div className="bt-tool-feat">Multi-equipment type support</div>
               <div className="bt-tool-feat">Pickup date & time scheduling</div>
