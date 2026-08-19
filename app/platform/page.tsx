@@ -403,10 +403,6 @@ export default function PlatformPage() {
               <div className="plt-stat-l">Active Loads</div>
             </div>
             <div className="plt-stat">
-              <div className="plt-stat-n green">2,340</div>
-              <div className="plt-stat-l">Carriers Online</div>
-            </div>
-            <div className="plt-stat">
               <div className="plt-stat-n purple">{savedLoads.length}</div>
               <div className="plt-stat-l">Saved Loads</div>
             </div>
