@@ -59,6 +59,10 @@ const { error: planError } = await supabase
   console.error(planError);
   return;
 }
+// Meta Pixel - track successful registration
+if (typeof window !== "undefined" && (window as any).fbq) {
+  (window as any).fbq("track", "CompleteRegistration");
+}
 }
       setLoading(false);
       alert("Account created successfully! Please confirm your email and then login.");
