@@ -53,9 +53,11 @@ const { error: planError } = await supabase
     expires_at: expiresAt.toISOString(),
   });
 
-if (planError) {
-  alert(planError.message);
-  console.log(planError);
+  if (planError) {
+  setLoading(false);
+  alert("Could not create your trial plan. Please try again.");
+  console.error(planError);
+  return;
 }
 }
       setLoading(false);
