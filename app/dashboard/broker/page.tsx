@@ -109,6 +109,7 @@ export default function BrokerDashboard() {
   const [requestsTab, setRequestsTab] = useState<"pending" | "all">("pending");
 
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [signingOut, setSigningOut] = useState(false);
 
   // search / filter / sort
   const [searchQuery, setSearchQuery] = useState("");
@@ -438,6 +439,17 @@ export default function BrokerDashboard() {
     URL.revokeObjectURL(url);
   };
 
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    const { error } = await supabase.auth.signOut();
+    setSigningOut(false);
+    if (error) {
+      pushToast("error", error.message);
+    } else {
+      window.location.href = "/login";
+    }
+  };
+
   const equipmentColors: Record<string, { bg: string; color: string }> = {
     "Dry Van":           { bg: "#EBF1FD", color: "#1A56DB" },
     "Reefer":            { bg: "#E6F7EE", color: "#12A150" },
@@ -548,8 +560,12 @@ export default function BrokerDashboard() {
         .bd-page-title { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; letter-spacing: -0.04em; color: var(--txt); line-height: 1.1; margin-bottom: 6px; font-family: 'Plus Jakarta Sans', sans-serif; }
         .bd-page-title em { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; color: var(--green); }
         .bd-page-sub { font-size: 0.86rem; color: var(--txt3); line-height: 1.65; }
+        .bd-header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .bd-export-btn { padding: 10px 18px; border-radius: 10px; font-size: 0.8rem; font-weight: 700; border: 1.5px solid var(--border2); background: var(--white); color: var(--txt2); cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.15s; white-space: nowrap; }
         .bd-export-btn:hover { border-color: var(--green); color: var(--green); }
+        .bd-signout-btn { padding: 10px 18px; border-radius: 10px; font-size: 0.8rem; font-weight: 700; border: 1.5px solid #FEE2E2; background: var(--white); color: var(--red); cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.15s; white-space: nowrap; }
+        .bd-signout-btn:hover { background: var(--red-l); border-color: var(--red); }
+        .bd-signout-btn:disabled { opacity: 0.65; cursor: not-allowed; }
 
         /* STATS BAR */
         .bd-stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 32px; }
@@ -726,7 +742,12 @@ export default function BrokerDashboard() {
             <div className="bd-page-title">Manage Your <em>Loads</em></div>
             <div className="bd-page-sub">Post freight, track bookings, and connect with verified carriers — all in one place.</div>
           </div>
-          <button onClick={exportCSV} className="bd-export-btn">⬇ Export CSV</button>
+          <div className="bd-header-actions">
+            <button onClick={exportCSV} className="bd-export-btn">⬇ Export CSV</button>
+            <button onClick={handleSignOut} disabled={signingOut} className="bd-signout-btn">
+              {signingOut ? "Signing out..." : "🚪 Sign Out"}
+            </button>
+          </div>
         </div>
 
         {/* ── STATS ── */}

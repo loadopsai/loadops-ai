@@ -56,6 +56,7 @@ export default function CarrierDashboard() {
   const [selectedLoad, setSelectedLoad] = useState<Load | null>(null);
   const [activeTab, setActiveTab] = useState<"loads" | "profile" | "documents">("loads");
   const [bookingId, setBookingId] = useState<string | null>(null);
+  const [signingOut, setSigningOut] = useState(false);
 
   const [profile, setProfile] = useState({
     company_name: "", owner_name: "", phone: "", email: "",
@@ -172,6 +173,17 @@ export default function CarrierDashboard() {
     localStorage.removeItem("carrierProfile");
   };
 
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    const { error } = await supabase.auth.signOut();
+    setSigningOut(false);
+    if (error) {
+      alert(error.message);
+    } else {
+      window.location.href = "/login";
+    }
+  };
+
   const cap = (text: string) => {
     if (!text) return "";
     return text.toLowerCase().split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
@@ -235,6 +247,11 @@ export default function CarrierDashboard() {
         .cd-title { font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 800; letter-spacing: -0.045em; color: var(--txt); line-height: 1.06; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 6px; }
         .cd-title em { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; color: var(--blue); }
         .cd-sub { font-size: 0.84rem; color: var(--txt3); font-weight: 400; }
+
+        /* ── SIGN OUT BUTTON ── */
+        .cd-signout-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 10px; background: var(--white); color: var(--red); font-size: 0.78rem; font-weight: 700; border: 1.5px solid #FEE2E2; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.15s; flex-shrink: 0; margin-top: 2px; }
+        .cd-signout-btn:hover { background: var(--red-l); border-color: var(--red); }
+        .cd-signout-btn:disabled { opacity: 0.65; cursor: not-allowed; }
 
         /* ── STATS ── */
         .cd-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; animation: fadeUp 0.5s 0.05s ease both; }
@@ -382,6 +399,9 @@ export default function CarrierDashboard() {
             <div className="cd-title">Your <em>Load Board</em></div>
             <div className="cd-sub">AI-matched loads, broker verified, zero spam calls.</div>
           </div>
+          <button className="cd-signout-btn" onClick={handleSignOut} disabled={signingOut}>
+            {signingOut ? "Signing out..." : "🚪 Sign Out"}
+          </button>
         </div>
 
         {/* ── STATS ── */}

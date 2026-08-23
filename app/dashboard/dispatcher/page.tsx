@@ -75,6 +75,7 @@ const [upgradeMessage, setUpgradeMessage] = useState("");
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [dispatcherLoads, setDispatcherLoads] = useState<DispatcherLoad[]>([]);
   const [activeTab, setActiveTab] = useState<"profile" | "loads" | "posted">("profile");
+  const [signingOut, setSigningOut] = useState(false);
 
   const [form, setForm] = useState<DispatcherProfile>({
     full_name: "", company_name: "", phone: "", email: "", experience: "",
@@ -194,6 +195,17 @@ if (!permission.allowed) {
     fetchLoads();
   };
 
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    const { error } = await supabase.auth.signOut();
+    setSigningOut(false);
+    if (error) {
+      alert(error.message);
+    } else {
+      window.location.href = "/login";
+    }
+  };
+
   return (
     <main style={{ minHeight: "100vh", background: "#F7F8FA", fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#0F1520" }}>
 
@@ -241,12 +253,17 @@ if (!permission.allowed) {
         .dd-page { max-width: 1200px; margin: 0 auto; padding: 36px 5% 80px; }
 
         /* ── PAGE HEADER ── */
-        .dd-header { margin-bottom: 28px; animation: fadeUp 0.5s ease both; }
+        .dd-header { margin-bottom: 28px; animation: fadeUp 0.5s ease both; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
         .dd-eyebrow { display: flex; align-items: center; gap: 8px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--purple); margin-bottom: 10px; }
         .dd-eyebrow::before { content: ''; width: 20px; height: 2px; background: var(--purple); border-radius: 1px; }
         .dd-title { font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 800; letter-spacing: -0.045em; color: var(--txt); line-height: 1.06; margin-bottom: 6px; font-family: 'Plus Jakarta Sans', sans-serif; }
         .dd-title em { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; color: var(--purple); }
         .dd-sub { font-size: 0.84rem; color: var(--txt3); font-weight: 400; }
+
+        /* ── SIGN OUT BUTTON ── */
+        .dd-signout-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 10px; background: var(--white); color: var(--red); font-size: 0.78rem; font-weight: 700; border: 1.5px solid #FEE2E2; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.15s; flex-shrink: 0; margin-top: 2px; }
+        .dd-signout-btn:hover { background: var(--red-l); border-color: var(--red); }
+        .dd-signout-btn:disabled { opacity: 0.65; cursor: not-allowed; }
 
         /* ── STATS ── */
         .dd-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; animation: fadeUp 0.5s 0.05s ease both; }
@@ -376,9 +393,14 @@ if (!permission.allowed) {
 
         {/* ── PAGE HEADER ── */}
         <div className="dd-header">
-          <div className="dd-eyebrow">Dispatcher Dashboard</div>
-          <div className="dd-title">Your Professional <em>Dispatch Hub</em></div>
-          <div className="dd-sub">Manage your profile, post available loads, and grow your carrier network.</div>
+          <div>
+            <div className="dd-eyebrow">Dispatcher Dashboard</div>
+            <div className="dd-title">Your Professional <em>Dispatch Hub</em></div>
+            <div className="dd-sub">Manage your profile, post available loads, and grow your carrier network.</div>
+          </div>
+          <button className="dd-signout-btn" onClick={handleSignOut} disabled={signingOut}>
+            {signingOut ? "Signing out..." : "🚪 Sign Out"}
+          </button>
         </div>
 
         {/* ── STATS ── */}
