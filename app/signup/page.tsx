@@ -31,34 +31,6 @@ function SignupContent() {
       if (error) { setLoading(false); alert(error.message); return; }
       if (data.user) {
   // Create profile
-  const { error: profileError } = await supabase
-    .from("profiles")
-    .insert([{ id: data.user.id, email, role }]);
-  if (profileError) {
-  setLoading(false);
-  alert(profileError.message);
-  console.error(profileError);
-  return;
-}
-
- // Create 7-day trial
-const expiresAt = new Date();
-expiresAt.setDate(expiresAt.getDate() + 7);
-
-const { error: planError } = await supabase
-  .from("user_plans")
-  .insert({
-    email,
-    plan: "trial",
-    expires_at: expiresAt.toISOString(),
-  });
-
-  if (planError) {
-  setLoading(false);
-  alert("Could not create your trial plan. Please try again.");
-  console.error(planError);
-  return;
-}
 // Meta Pixel - track successful registration
 if (typeof window !== "undefined" && (window as any).fbq) {
   (window as any).fbq("track", "CompleteRegistration");
