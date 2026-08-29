@@ -123,7 +123,7 @@ export default function DispatchersPage() {
         .dp-page-sub { font-size: 0.92rem; color: var(--txt3); max-width: 560px; line-height: 1.75; font-weight: 400; }
 
         /* ── STATS BAR ── */
-        .dp-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 32px; animation: fadeUp 0.5s 0.1s ease both; }
+        .dp-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 32px; animation: fadeUp 0.5s 0.1s ease both; }
         .dp-stat { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; }
         .dp-stat-n { font-size: 1.55rem; font-weight: 800; color: var(--txt); letter-spacing: -0.04em; line-height: 1; margin-bottom: 4px; font-family: 'Plus Jakarta Sans', sans-serif; }
         .dp-stat-n span { color: var(--purple); }
@@ -219,7 +219,7 @@ export default function DispatchersPage() {
 
         /* ── RESPONSIVE ── */
         @media (max-width: 900px) {
-          .dp-stats { grid-template-columns: repeat(2, 1fr); }
+          .dp-stats { grid-template-columns: repeat(3, 1fr); }
           .dp-meta { grid-template-columns: repeat(2, 1fr); }
           .dp-load-meta { grid-template-columns: repeat(2, 1fr); }
           .dp-card-top { flex-direction: column; }
@@ -264,6 +264,10 @@ export default function DispatchersPage() {
               {loading ? "—" : loads.length}<span></span>
             </div>
             <div className="dp-stat-l">Live Posted Loads</div>
+          </div>
+          <div className="dp-stat">
+            <div className="dp-stat-n" style={{ color: "#D97706" }}>50<span>+</span></div>
+            <div className="dp-stat-l">Active Carriers</div>
           </div>
           <div className="dp-stat">
             <div className="dp-stat-n" style={{ color: "#7C3AED" }}>4.8<span>★</span></div>
